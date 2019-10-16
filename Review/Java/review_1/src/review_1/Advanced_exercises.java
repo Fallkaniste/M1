@@ -1,6 +1,7 @@
 package review_1;
 
 import java.io.IOException;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Advanced_exercises {
@@ -32,7 +33,7 @@ public class Advanced_exercises {
 	
 	public static void hangman() 
     { 
-		for (int i = 0; i < 50; ++i) System.out.println();	
+		for (int i = 0; i < 30; ++i) System.out.println();	
 		Scanner sc = new Scanner(System.in);
 		int rand = (int)Math.floor(Math.random() * ( 10 - 0 ));
 		int life = 10;
@@ -53,7 +54,7 @@ public class Advanced_exercises {
 			System.out.println("You have "+life+" remaining lives");
 			System.out.println("Please make a guess :");
 			letter = sc.nextLine().charAt(0);
-			for (int i = 0; i < 50; ++i) System.out.println();	
+			for (int i = 0; i < 30; ++i) System.out.println();	
 			if(word.indexOf(letter)>=0)
 			{
 				System.out.println("You found a letter !");
@@ -81,23 +82,82 @@ public class Advanced_exercises {
 		}
 		System.out.println();	
     }
+	
 	public static void riceBags() 
     { 
-		boolean again = true;
-		while(again)
-		{
-			again =false;
-		}
+
     }
+	
+	
+	
+	
 	public static void RPS() 
     { 
 		
+		char again = 'y';
+		Scanner sc = new Scanner(System.in);
+		int weapon=0;
+		int weaponC=0;
+		int matches=0;
+		int score=0;
+		Random rand = new Random();
+		while(again=='y')
+		{
+			for (int i = 0; i < 30; ++i) System.out.println();
+			while(!((weapon==1)||(weapon==2)||(weapon==3)))
+			{
+				System.out.println("Choose your weapon!");
+				System.out.println("1. Paper");
+				System.out.println("2. Scissors");
+				System.out.println("3. Rock");
+				weapon = Integer.parseInt(sc.nextLine());
+			}
+			if (weapon==1)
+				System.out.println("You chose paper!");
+			if (weapon==2)
+				System.out.println("You chose scissors!");
+			if (weapon==3)
+				System.out.println("You chose rock!");
+			weaponC = rand.nextInt(3)+1;
+			if (weaponC==1)System.out.println("I chose paper!");
+			if (weaponC==2)System.out.println("I chose scissors!");
+			if (weaponC==3)System.out.println("I chose rock!");
+			
+			if(weapon==weaponC)
+			{
+				System.out.println("We are equally matched, You are a worthy adversary.");
+				score++;
+			}
+			else
+			{
+				if((weapon==1&&weaponC==3)||(weapon==2&&weaponC==1)||(weapon==3&&weaponC==2))
+				{
+					System.out.println("I have been vanquished !");
+					score++;
+				}
+				else {
+					System.out.println("You have been vanquished !");
+				}
+			}
+			matches++;
+			System.out.println("We have matched wits "+matches+" times, and your score is "+score);
+			weapon=0;
+			weaponC=0;
+			System.out.println("Do you want to play again (y or n) ? ");
+			sc = new Scanner(System.in);
+			again = sc.nextLine().charAt(0);
+		}
     }
+	
+	
+	
+	
+	
 	public static void main(String[] args) {
 		boolean again=true;
 		while(again)
 		{
-			for (int i = 0; i < 50; ++i) System.out.println();
+			for (int i = 0; i < 30; ++i) System.out.println();
 			System.out.println("Please choose a game :");
 			System.out.println("1- Number Guessing Game");
 			System.out.println("2- Hangman");
@@ -124,7 +184,7 @@ public class Advanced_exercises {
 			default:
 			    System.out.println("Not a good entry");
 			}
-			System.out.println("Continue ? (y/n)");
+			System.out.println("Play another gamee (y or n)? ");
 			choice = sc.nextLine().charAt(0);
 			if (choice=='n')
 			{
