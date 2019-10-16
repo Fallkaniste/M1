@@ -32,11 +32,62 @@ public class Advanced_exercises {
 	
 	public static void hangman() 
     { 
+		for (int i = 0; i < 50; ++i) System.out.println();	
+		Scanner sc = new Scanner(System.in);
+		int rand = (int)Math.floor(Math.random() * ( 10 - 0 ));
+		int life = 10;
+		String word = array[rand];
+		String display="";
+		char letter ;
+		char[] displayChar;
+		for (int i = 0; i< word.length(); i++)
+		{
+			display = display +"_";
+		}
+		displayChar = display.toCharArray();
 		
+		while(life>0 && !word.equals(display))
+		{
+			System.out.println("WORD :  "+display);
+			System.out.println();
+			System.out.println("You have "+life+" remaining lives");
+			System.out.println("Please make a guess :");
+			letter = sc.nextLine().charAt(0);
+			for (int i = 0; i < 50; ++i) System.out.println();	
+			if(word.indexOf(letter)>=0)
+			{
+				System.out.println("You found a letter !");
+				for (int i = 0; i< word.length(); i++)
+				{
+					if(word.charAt(i)==letter)
+						{
+							displayChar[i] = letter;
+							display = String.valueOf(displayChar);		
+						}
+				}
+			}
+			else {
+				System.out.println(letter +" is not in the word, you lose a life !");
+				life--;
+				System.out.println();
+			}	
+		}
+		if(word.equals(display))
+		{
+			System.out.println("You won ! ");
+		}
+		else {
+			System.out.println("You lost.. ");
+		}
+		System.out.println();	
     }
 	public static void riceBags() 
     { 
-		
+		boolean again = true;
+		while(again)
+		{
+			again =false;
+		}
     }
 	public static void RPS() 
     { 
