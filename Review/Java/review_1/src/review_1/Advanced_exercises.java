@@ -11,12 +11,13 @@ public class Advanced_exercises {
 	public static void numberGuessing() 
     { 
 		int rand = (int)Math.floor(Math.random() * ( 100 - 0 ));
+		Integer guess = -1;
 		for (int i=0; i<5;i++)
 		{
 			Scanner input = new Scanner(System.in);
 			System.out.println("Please enter your guess :");
 			String str = input.nextLine();
-			Integer guess =Integer.parseInt(str);
+			guess =Integer.parseInt(str);
 			if(guess > rand){
 				System.out.println("Too high !");
 			}
@@ -28,7 +29,13 @@ public class Advanced_exercises {
 				break;
 			}			
 		}
-		System.out.println("You lost :c");
+		if(guess!=rand)
+		{
+			System.out.println();
+			System.out.println("You lost :c");
+			System.out.println("The number was "+rand);
+		}
+		System.out.println();
     }
 	
 	public static void hangman() 
@@ -75,20 +82,59 @@ public class Advanced_exercises {
 		}
 		if(word.equals(display))
 		{
-			System.out.println("You won ! ");
+			System.out.println("You won !");
 		}
 		else {
-			System.out.println("You lost.. ");
+			System.out.println("You lost :'c");
 		}
 		System.out.println();	
     }
 	
-	public static void riceBags() 
+	public static int riceBags (int big, int small, int kg)
     { 
-
+		int nbSmall=0;
+		while(kg!=0&&(big!=00||small!=0))
+		{			
+			if(kg>5&&big>0)
+			{
+				kg=kg-5;
+				big--;
+			}
+			else if((kg>0&&small>0)||big==0)
+			{
+				kg--;
+				small--;
+				nbSmall++;
+			}
+		}
+		if(kg==0)
+		{
+			return nbSmall;
+		}
+		else {
+			return -1;
+		}
     }
 	
-	
+	public static void numberOfBags()
+	{
+		Scanner sc = new Scanner(System.in);
+		int big, small, quantity;
+		System.out.println("How many big bags do you have ?");
+		big = Integer.parseInt(sc.nextLine());
+		System.out.println("How many small bags do you have ?");
+		small = Integer.parseInt(sc.nextLine());
+		System.out.println("How much rice do you want to pack ?");
+		quantity = Integer.parseInt(sc.nextLine());
+		int needed =riceBags(big,small,quantity);
+		if(needed==-1)
+		{
+			System.out.println("Impossible to package.");
+		}
+		else {
+			System.out.println("You will need "+needed+" small bags.");
+		}
+	}
 	
 	
 	public static void RPS() 
@@ -126,7 +172,6 @@ public class Advanced_exercises {
 			if(weapon==weaponC)
 			{
 				System.out.println("We are equally matched, You are a worthy adversary.");
-				score++;
 			}
 			else
 			{
@@ -176,7 +221,7 @@ public class Advanced_exercises {
 				hangman();
 				break;
 			case '3':
-				riceBags();
+				numberOfBags();
 				break;
 			case '4':
 				RPS();
@@ -184,7 +229,7 @@ public class Advanced_exercises {
 			default:
 			    System.out.println("Not a good entry");
 			}
-			System.out.println("Play another gamee (y or n)? ");
+			System.out.println("Play another game (y or n)? ");
 			choice = sc.nextLine().charAt(0);
 			if (choice=='n')
 			{
