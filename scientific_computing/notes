@@ -1,0 +1,33 @@
+I-Exercises session
+
+DTW
+numerical sequice
+DNA sequences
+voices with letters
+
+II-Audio control word recognition system
+capstral coefficient *12
+MFCC coefficients
+MFCC->Mel frequency cepstral coefficients
+toolbox librosa, windows*12
+
+-> Own study
+
+use corpus with french words and compare with your own voice
+e.g. :
+10 files learning basis : gather reference oder/records
+5 files test basis : gather test order
+each test file −> apply DTW
+=> recognize the file order that givs minimal cost in DTW
+
+III-Comparison between PCA reduction and key nearest neighbours
+take the average among all the windows
+
+PCA reduction of the vector of 12 windows and create a 3D vector fo each file
+(only on learning basis)
+
+KNN -> compute all distances of all the files in the test basis to the learning basis
+
+to deliver :
+- notebook / report(8 pages)
+-study
