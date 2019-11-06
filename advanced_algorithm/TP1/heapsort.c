@@ -133,10 +133,10 @@ int main( int argc, char **argv ) {
 
 	printf("K : %d\n", k);
 	printf("D : %d\n", n);
-/*
+
 	int add_greatest[k];
 	int heap_greatest[k];
-*/
+
 	add_start=clock();
 	int size=0;
 	int data_add[n+5];
@@ -144,7 +144,7 @@ int main( int argc, char **argv ) {
 		add(data_add,&size,data_heap[i]);
 	}
 	for (size_t i = 0; i < k; i++) {
-		// add_greatest[i]=data_add[i];
+		add_greatest[i]=data_add[i];
 		pop(data_add,&size);
 	}
 	add_end=clock();
@@ -152,7 +152,7 @@ int main( int argc, char **argv ) {
 	heap_start=clock();
 	build_heap(data_heap,n);
 	for (size_t i = 0; i < k; i++) {
-		// heap_greatest[i]=data_heap[i];
+		heap_greatest[i]=data_heap[i];
 		pop(data_heap,&n);
 	}
 	heap_end=clock();
@@ -172,7 +172,7 @@ int main( int argc, char **argv ) {
 
 	free(data_heap);
 
-/*
+
 	for (size_t i = 0; i < 150; i++) {
 		printf("%d %d \n",data_heap[i], data_add[i] );
 	}
@@ -184,7 +184,7 @@ int main( int argc, char **argv ) {
 	printf("Numbers extracted from the add sort: \n");
 	print_data(heap_greatest,k);
 	printf("\n");
-*/
+
 
 	return 0;
 }

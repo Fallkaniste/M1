@@ -1,0 +1,143 @@
+   0  $accept : %entry% $end
+
+   1  sp : s EOF
+
+   2  s : u A
+   3    | B u C
+   4    | v C
+   5    | B v A
+
+   6  u : D
+
+   7  v : D
+
+   8  %entry% : '\001' sp
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . sp  (8)
+
+	B  shift 3
+	D  shift 4
+	.  error
+
+	sp  goto 5
+	s  goto 6
+	u  goto 7
+	v  goto 8
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	s : B . u C  (3)
+	s : B . v A  (5)
+
+	D  shift 4
+	.  error
+
+	u  goto 9
+	v  goto 10
+
+
+4: reduce/reduce conflict (reduce 6, reduce 7) on A
+4: reduce/reduce conflict (reduce 6, reduce 7) on C
+state 4
+	u : D .  (6)
+	v : D .  (7)
+
+	.  reduce 6
+
+
+state 5
+	%entry% : '\001' sp .  (8)
+
+	.  reduce 8
+
+
+state 6
+	sp : s . EOF  (1)
+
+	EOF  shift 11
+	.  error
+
+
+state 7
+	s : u . A  (2)
+
+	A  shift 12
+	.  error
+
+
+state 8
+	s : v . C  (4)
+
+	C  shift 13
+	.  error
+
+
+state 9
+	s : B u . C  (3)
+
+	C  shift 14
+	.  error
+
+
+state 10
+	s : B v . A  (5)
+
+	A  shift 15
+	.  error
+
+
+state 11
+	sp : s EOF .  (1)
+
+	.  reduce 1
+
+
+state 12
+	s : u A .  (2)
+
+	.  reduce 2
+
+
+state 13
+	s : v C .  (4)
+
+	.  reduce 4
+
+
+state 14
+	s : B u C .  (3)
+
+	.  reduce 3
+
+
+state 15
+	s : B v A .  (5)
+
+	.  reduce 5
+
+
+Rules never reduced:
+	v : D  (7)
+
+
+State 4 contains 2 reduce/reduce conflicts.
+
+
+8 terminals, 6 nonterminals
+9 grammar rules, 16 states
