@@ -144,16 +144,14 @@ int main( int argc, char **argv ) {
 		add(data_add,&size,data_heap[i]);
 	}
 	for (size_t i = 0; i < k; i++) {
-		add_greatest[i]=data_add[i];
-		pop(data_add,&size);
+		add_greatest[i]=pop(data_add,&size);
 	}
 	add_end=clock();
 
 	heap_start=clock();
 	build_heap(data_heap,n);
 	for (size_t i = 0; i < k; i++) {
-		heap_greatest[i]=data_heap[i];
-		pop(data_heap,&n);
+		heap_greatest[i]=pop(data_heap,&n);
 	}
 	heap_end=clock();
 
@@ -168,16 +166,6 @@ int main( int argc, char **argv ) {
 */
 	printf("\n HEAP TIME : %.7fms \n", heap_time);
 	printf("\n ADD TIME : %.7fms \n\n", add_time);
-
-
-	free(data_heap);
-
-
-	for (size_t i = 0; i < 150; i++) {
-		printf("%d %d \n",data_heap[i], data_add[i] );
-	}
-	bubble_sort(add_greatest,k,k);
-	bubble_sort(heap_greatest,k,k);
 	printf("Numbers extracted from the buildheap sort: \n");
 	print_data(add_greatest,k);
 	printf("\n");
@@ -185,6 +173,7 @@ int main( int argc, char **argv ) {
 	print_data(heap_greatest,k);
 	printf("\n");
 
+	free(data_heap);
 
 	return 0;
 }
