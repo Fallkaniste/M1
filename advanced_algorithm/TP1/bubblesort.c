@@ -68,7 +68,6 @@ int main( int argc, char **argv ) {
 
 
 	printf("D : %d\n", n);
-	k=1;
 	printf("K = 1 (arbitrary choice, needed for the time comparison)\n");
 
 	int data_sort[n];
@@ -87,19 +86,21 @@ int main( int argc, char **argv ) {
 	qsort_time = ((double) (qsort_end - qsort_start)) / CLOCKS_PER_SEC;
 	bubble_time = ((double) (bubble_end) - bubble_start) / CLOCKS_PER_SEC;
 
-	while(k<n&&bubble_time<=qsort_time)
+	bubble_start=clock();
+	bubble_sort(data_bubble,n,k);
+	bubble_end=clock();
+
+	/*while(k<n&&bubble_time<=qsort_time)
 	{
 		k++;
-		bubble_start=clock();
-		bubble_sort(data_bubble,n,k);
-		bubble_end=clock();
+
 		bubble_time = ((double) (bubble_end) - bubble_start) / CLOCKS_PER_SEC;
-	}
+	}*/
 
 	printf("\n\n you will need to extract %d numbers for the qsort to be more effecient than the optimized bubble sort\n",k );
-	printf("\n Qsort TIME : %.7fms \n", qsort_time);
-	printf("\n Bubble TIME : %.7fms \n\n", bubble_time);
-
+	printf("\n Qsort TIME : %.7fms \n", qsort_time*1000);
+	printf("\n Bubble TIME : %.7fms \n\n", bubble_time*1000);
+/*
 	printf("Numbers extracted by the quick sort are :\n");
 	for (size_t i = n-1; i > n-k; i--) {
 		printf("%d ", data_sort[i]);
@@ -108,7 +109,7 @@ int main( int argc, char **argv ) {
 	for (size_t i = n-1; i > n-k; i--) {
 		printf("%d ", data_bubble[i]);
 	}
-	printf("\n");
+	printf("\n");*/
 	 free(data_bubble);
 	return 0;
 }

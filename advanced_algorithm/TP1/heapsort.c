@@ -158,19 +158,19 @@ int main( int argc, char **argv ) {
 	add_time = ((double) (add_end - add_start)) / CLOCKS_PER_SEC;
 	heap_time = ((double) (heap_end) - heap_start) / CLOCKS_PER_SEC;
 
-/*
-	printf("\nHEAP :\n");
-	print_data(data_heap,n);
+
+	/*printf("\nHEAP :\n");
+	print_data(data_heap,30);
 	printf("\nADD :\n");
-	print_data(data_add,size);
-*/
-	printf("\n HEAP TIME : %.7fms \n", heap_time);
-	printf("\n ADD TIME : %.7fms \n\n", add_time);
-	printf("Numbers extracted from the buildheap sort: \n");
-	print_data(add_greatest,k);
+	print_data(data_add,30);*/
+
+	printf("\n HEAP TIME : %.7fms \n", heap_time*1000);
+	printf("\n ADD TIME : %.7fms \n\n", add_time*1000);
+printf("Numbers extracted from the add sort: \n");
+	print_data(add_greatest,15);
 	printf("\n");
-	printf("Numbers extracted from the add sort: \n");
-	print_data(heap_greatest,k);
+	printf("Numbers extracted from the heap sort: \n");
+	print_data(heap_greatest,15);
 	printf("\n");
 
 	free(data_heap);
