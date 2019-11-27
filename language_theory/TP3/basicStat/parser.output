@@ -1,0 +1,193 @@
+   0  $accept : %entry% $end
+
+   1  statlist : EOF
+   2           | stat
+   3           | stat ENDINSTR statlist
+
+   4  stat : affectstat
+
+   5  affectstat : ident AFFECT expr
+
+   6  expr : ident
+   7       | term
+   8       | expr PLUS expr
+   9       | expr TIMES expr
+
+  10  ident : IDENTIFIER
+
+  11  term : INTCONST
+
+  12  %entry% : '\001' statlist
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . statlist  (12)
+
+	IDENTIFIER  shift 3
+	EOF  shift 4
+	.  error
+
+	ident  goto 5
+	statlist  goto 6
+	stat  goto 7
+	affectstat  goto 8
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	ident : IDENTIFIER .  (10)
+
+	.  reduce 10
+
+
+state 4
+	statlist : EOF .  (1)
+
+	.  reduce 1
+
+
+state 5
+	affectstat : ident . AFFECT expr  (5)
+
+	AFFECT  shift 9
+	.  error
+
+
+state 6
+	%entry% : '\001' statlist .  (12)
+
+	.  reduce 12
+
+
+state 7
+	statlist : stat .  (2)
+	statlist : stat . ENDINSTR statlist  (3)
+
+	ENDINSTR  shift 10
+	$end  reduce 2
+
+
+state 8
+	stat : affectstat .  (4)
+
+	.  reduce 4
+
+
+state 9
+	affectstat : ident AFFECT . expr  (5)
+
+	INTCONST  shift 11
+	IDENTIFIER  shift 3
+	.  error
+
+	term  goto 12
+	ident  goto 13
+	expr  goto 14
+
+
+state 10
+	statlist : stat ENDINSTR . statlist  (3)
+
+	IDENTIFIER  shift 3
+	EOF  shift 4
+	.  error
+
+	ident  goto 5
+	statlist  goto 15
+	stat  goto 7
+	affectstat  goto 8
+
+
+state 11
+	term : INTCONST .  (11)
+
+	.  reduce 11
+
+
+state 12
+	expr : term .  (7)
+
+	.  reduce 7
+
+
+state 13
+	expr : ident .  (6)
+
+	.  reduce 6
+
+
+state 14
+	affectstat : ident AFFECT expr .  (5)
+	expr : expr . PLUS expr  (8)
+	expr : expr . TIMES expr  (9)
+
+	PLUS  shift 16
+	TIMES  shift 17
+	$end  reduce 5
+	ENDINSTR  reduce 5
+
+
+state 15
+	statlist : stat ENDINSTR statlist .  (3)
+
+	.  reduce 3
+
+
+state 16
+	expr : expr PLUS . expr  (8)
+
+	INTCONST  shift 11
+	IDENTIFIER  shift 3
+	.  error
+
+	term  goto 12
+	ident  goto 13
+	expr  goto 18
+
+
+state 17
+	expr : expr TIMES . expr  (9)
+
+	INTCONST  shift 11
+	IDENTIFIER  shift 3
+	.  error
+
+	term  goto 12
+	ident  goto 13
+	expr  goto 19
+
+
+state 18
+	expr : expr . PLUS expr  (8)
+	expr : expr PLUS expr .  (8)
+	expr : expr . TIMES expr  (9)
+
+	TIMES  shift 17
+	$end  reduce 8
+	PLUS  reduce 8
+	ENDINSTR  reduce 8
+
+
+state 19
+	expr : expr . PLUS expr  (8)
+	expr : expr . TIMES expr  (9)
+	expr : expr TIMES expr .  (9)
+
+	.  reduce 9
+
+
+11 terminals, 8 nonterminals
+13 grammar rules, 20 states
