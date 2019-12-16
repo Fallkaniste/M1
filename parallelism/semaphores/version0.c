@@ -12,8 +12,8 @@
 
 #define TRACE
 
-#define NB_TIMES_PROD   2
-#define NB_TIMES_CONS  2
+#define NB_TIMES_PROD   1
+#define NB_TIMES_CONS  1
 
 #define NB_PROD_MAX   20
 #define NB_CONS_MAX  20

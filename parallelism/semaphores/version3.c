@@ -13,8 +13,10 @@
 
 #define TRACE
 
-#define NB_TIMES_PROD   1
+#define NB_TIMES_PROD  1
 #define NB_TIMES_CONS  1
+
+#define NB_TYPES 5
 
 #define NB_PROD_MAX   20
 #define NB_CONS_MAX  20
@@ -23,7 +25,7 @@
 
 pthread_mutex_t criticalMutex = PTHREAD_MUTEX_INITIALIZER;
 sem_t producerSem ;
-sem_t consumerSem ;
+sem_t consumerSem[NB_TYPES] ;
 
 
 typedef struct {
@@ -112,17 +114,14 @@ void * producer (void *arg) {
   TypeMessage theMessage;
   Parameters *param = (Parameters *)arg;
 	sleep(1);
-  for (i = 0; i < NB_TIMES_PROD; i++) {
+    sprintf (theMessage.info, "%s n°%d", "Hello", i);
     theMessage.typeOfMessage = param->typeOfMessage;
     theMessage.producerNumber = param->threadNumber;
 	  sem_wait(&producerSem);
 	  pthread_mutex_lock(&criticalMutex);
 	  makePut(theMessage);
-	  sem_post(&consumerSem);
-#ifdef TRACE
-	  showBuffer();
-#endif
 	  pthread_mutex_unlock(&criticalMutex);
+    sem_post(&consumerEntrySem]);
   }
   return NULL;
 }
@@ -134,14 +133,16 @@ void * consumer (void *arg) {
   Parameters *param = (Parameters *)arg;
 	sleep(1);
   for (i = 0; i < NB_TIMES_CONS; i++) {
-	  sem_wait(&consumerSem);
+    sem_wait(&consumerEntrySem);
+    for (int i = 0 ; i < NB_TYPE ; i++){
+      if(theMessage.typeOfMessage == i) {
+        sem_post(&consSem[i]) ;
+      }
+    }
 	  pthread_mutex_lock(&criticalMutex);
 	  makeGet(&theMessage);
 	  sem_post(&producerSem);
-#ifdef TRACE
-	  showBuffer();
-#endif
-	pthread_mutex_unlock(&criticalMutex);
+	  pthread_mutex_unlock(&criticalMutex);
   }
   return NULL;
 }
@@ -175,28 +176,22 @@ int main(int argc, char *argv[]) {
 
   initializeSharedVariables();
   sem_init(&producerSem, 0, nbPositions);
-  sem_init(&consumerSem, 0, 0);
+  for (int i = 0 ; i < NB_TYPES ; i++){
+    sem_init(&consumerSem[i], 0, 0);
+  }
 
-
-  /* Creation of nbProd producers and nbConso consumers */
   for (i = 0; i <  nbThds; i++) {
     if (i < nbProd) {
-      paramThds[i].typeOfMessage = 0;
+      paramThds[i].typeOfMessage = i%NB_TYPES;
       paramThds[i].threadNumber = i;
       if ((etat = pthread_create(&idThdProd[i], NULL, producer, &paramThds[i])) != 0)
         thdErreur(etat, "Creation producer", etat);
-#ifdef TRACE
-      printf("Creation thread producer n°%d -> %d/%d\n", i, paramThds[i].threadNumber, nbProd-1);
-#endif
     }
     else {
-      paramThds[i].typeOfMessage = 0;
+      paramThds[i].typeOfMessage = i%NB_TYPES;
       paramThds[i].threadNumber = i - nbProd;
       if ((etat = pthread_create(&idThdConso[i-nbProd], NULL, consumer, &paramThds[i])) != 0)
         thdErreur(etat, "Creation consumer", etat);
-#ifdef TRACE
-      printf("Creation thread consumer n°%d -> %d/%d\n", i-nbProd, paramThds[i].threadNumber, nbCons-1);
-#endif
     }
   }
 

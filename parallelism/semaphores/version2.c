@@ -13,8 +13,8 @@
 
 #define TRACE
 
-#define NB_TIMES_PROD   2
-#define NB_TIMES_CONS  2
+#define NB_TIMES_PROD   1
+#define NB_TIMES_CONS  1
 
 #define NB_PROD_MAX   20
 #define NB_CONS_MAX  20
@@ -113,14 +113,10 @@ void * producer (void *arg) {
   int i;
   TypeMessage theMessage;
   Parameters *param = (Parameters *)arg;
-
-	sleep(1); // to make sure that all consumers and producers have been created before starting --> only for display reasons, so that there is no interleaving...
-
+	sleep(1);
   for (i = 0; i < NB_TIMES_PROD; i++) {
-    sprintf (theMessage.info, "%s n°%d", "Hello", i);
     theMessage.typeOfMessage = param->typeOfMessage;
     theMessage.producerNumber = param->threadNumber;
-
 	  sem_wait(&producerEntrySem);
     if (theMessage.typeOfMessage==0) {
       sem_wait(&producer0Sem);
@@ -129,9 +125,6 @@ void * producer (void *arg) {
       sem_wait(&producer1Sem);
     }
 	  pthread_mutex_lock(&criticalMutex);
-	  printf("\tProducer %d : Message = (%d, %s, %d)\n",
-			 param->threadNumber, theMessage.typeOfMessage, theMessage.info, theMessage.producerNumber);
-
 	  makePut(theMessage);
     #ifdef TRACE
 	   showBuffer();
@@ -144,8 +137,6 @@ void * producer (void *arg) {
       sem_post(&producer0Sem);
     }
     sem_post(&consumerSem);
-
-    //usleep(rand()%(100 * param->rang + 100));
   }
   return NULL;
 }
@@ -155,24 +146,14 @@ void * consumer (void *arg) {
   int i;
   TypeMessage theMessage;
   Parameters *param = (Parameters *)arg;
-	sleep(1); // to make sure that all consumers and producers have been created before starting --> only for display reasons, so that there is no interleaving...
-
+	sleep(1);
   for (i = 0; i < NB_TIMES_CONS; i++) {
 
 	  sem_wait(&consumerSem);
 	  pthread_mutex_lock(&criticalMutex);
 	  makeGet(&theMessage);
 	  sem_post(&producerEntrySem);
-
-	  printf("\t\tConso %d : Message = (%d, %s, %d)\n",
-           param->threadNumber, theMessage.typeOfMessage, theMessage.info, theMessage.producerNumber);
-#ifdef TRACE
-	  showBuffer();
-#endif
-
-	pthread_mutex_unlock(&criticalMutex);
-
-    //usleep(rand()%(100 * param->rang + 100));
+  	pthread_mutex_unlock(&criticalMutex);
   }
   return NULL;
 }
@@ -218,12 +199,10 @@ int main(int argc, char *argv[]) {
       paramThds[i].threadNumber = i;
       if ((etat = pthread_create(&idThdProd[i], NULL, producer, &paramThds[i])) != 0)
         thdErreur(etat, "Creation producer", etat);
-#ifdef TRACE
-      printf("Creation thread producer n°%d -> %d/%d\n", i, paramThds[i].threadNumber, nbProd-1);
-#endif
+
     }
     else {
-      paramThds[i].typeOfMessage = i%2;
+      //consumers consume messages of any types so we don't add a type of message
       paramThds[i].threadNumber = i - nbProd;
       if ((etat = pthread_create(&idThdConso[i-nbProd], NULL, consumer, &paramThds[i])) != 0)
         thdErreur(etat, "Creation consumer", etat);
