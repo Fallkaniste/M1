@@ -7,28 +7,30 @@
 #include <string>
 #include <fstream>
 #include <random>
+#include <math.h>
 
 using namespace std;
 
 #define SIZE 6
-#define MAX_MOVES 5
+#define MAX_MOVES 300
 
-int evaluate(int size, int * Q, int * X) {
+//DONE
+float evaluate(int size, int * Q, int * X) {
   int temp[size][size] ;
    for (size_t i = 0; i < size; i++) {
-     for (size_t j = 0; j < size; j++) {
-       temp[i][j] = Q[i*size + j];
+     for (size_t j = 0; j < 3; j++) {
+       temp[i][j] = Q[i*3 + j];
      }
    }
-  int result = 0;
-  for (size_t i = 0; i < size; i++) {
-    for (size_t j = 0; j < size; j++) {
-      result = result +temp[i][j] * X[i] * X[j];
-    }
+  float result =sqrt(temp[X[0]-1][1]*temp[X[0]-1][1] + temp[X[0]-1][2]*temp[X[0]-1][2]);
+  result += sqrt(temp[X[size-1]-1][1]*temp[X[size-1]-1][1] + temp[X[size-1]-1][2]*temp[X[size-1]-1][2]) ;
+  for (size_t i = 0; i < size-1; i++) {
+    result += sqrt((temp[X[i]-1][1]-temp[X[i+1]-1][1]) * (temp[X[i]-1][1]-temp[X[i+1]-1][1]) + (temp[X[i]-1][2]-temp[X[i+1]-1][2]) * (temp[X[i]-1][2]-temp[X[i+1]-1][2]));
   }
   return result;
 }
 
+//DONE
 int * randomS(int size) {
   std::random_device dev;
   int * random = new int[size];
@@ -49,45 +51,48 @@ int * randomS(int size) {
   return random;
 }
 
-int * bestNeighbour(int size, int * Q, int * X) {
-  int temp[size][size] ;
-   for (size_t i = 0; i < size; i++) {
-     for (size_t j = 0; j < size; j++) {
-       temp[i][j] = Q[i*size + j];
-     }
-   }
+//DONE
+int * TSPbestNeighbour(int size, int * Q, int * X) {
+  int numberNeighbours = 0;
+  for (size_t i = 0; i < size; i++) {
+    numberNeighbours += i ;
+  }
   int neighbourResult[size] ;
   int a = 0;
-  int * test = new int[size];
+  int * bestNeighbour = randomS(size);
   int min = 50000;
-  for (size_t k = 0; k < size; k++) {
-    int result = 0;
-    X[k]=(X[k]+1)%2 ;
-    for (size_t i = 0; i < size; i++) {
-      for (size_t j = 0; j < size; j++) {
-        result = result +temp[i][j] * X[i] * X[j];
+  int temp ;
+  int result;
+  for (size_t k = 0; k < numberNeighbours; k++) {
+    for (size_t i = k; i < size; i++) {
+      temp = X[k] ;
+      X[k] = X[i] ;
+      X[i] = temp;
+      result = evaluate(size, Q, X);
+      //cout << "Iteration k=" << k << " i=" << i << " result : " << result << endl;
+      if (result < min) {
+        min = result ;
+        for (size_t i = 0; i < size; i++) {
+          bestNeighbour[i] = X[i];
+        }
       }
+      temp = X[k] ;
+      X[k] = X[i] ;
+      X[i] = temp;
     }
-    neighbourResult[k] = result ;
-    if (result < min) {
-      min = result ;
-      for (size_t i = 0; i < size; i++) {
-        test[i] = X[i] ;
-      }
-    }
-    X[k]=abs((X[k]-1)%2) ;
   }
-  return test;
+  return bestNeighbour;
 }
 
-int * steepestHillClimbing(int size, int * Q, int * X, int max_attempts) {
+//DONE
+int * TSPsteepestHillClimbing(int size, int * Q, int * X, int max_attempts) {
   int * bestResult = new int [size];
   for (size_t t = 0; t < max_attempts; t++) {
     X = randomS(size) ;
-    for (size_t i = 0; i < size; i++) {
+    /*for (size_t i = 0; i < size; i++) {
       cout << X[i] << " ";
-    }
-    cout << endl ;
+    }*/
+    cout << "another one" <<endl ;
     if (t == 0) {
       for (size_t i = 0; i < size; i++) {
         bestResult[i] = X[i];
@@ -96,7 +101,7 @@ int * steepestHillClimbing(int size, int * Q, int * X, int max_attempts) {
     int nb_moves = 0;
     bool STOP = false ;
     do {
-      int * X2 = bestNeighbour(size, Q, X) ;
+      int * X2 = TSPbestNeighbour(size, Q, X) ;
       if (evaluate(size, Q, X2)<evaluate(size, Q, X)) {
         for (size_t i = 0; i < size; i++) {
           X[i] = X2[i];
@@ -118,6 +123,52 @@ int * steepestHillClimbing(int size, int * Q, int * X, int max_attempts) {
   return bestResult;
 }
 
+
+int TSPtabuMethod(int size, int * Q, int * X, int max_attempts) {
+  int * bestResult = randomS(size);
+  int * s = new int[size];
+  int Tabu[max_attempts] ;
+  for (size_t i = 0; i < max_attempts; i++) {
+    Tabu[i] = 50000;
+  }
+  int nb_moves = 0 ;
+  bool STOP = false ;
+  int index = 0;
+  bool inside = false;
+  do {
+    cout << "Best result so far : "<< (int)evaluate(size, Q, bestResult) << endl;
+    inside = false ;
+    for (size_t i = 0; i < max_attempts; i++) {
+      if (Tabu[i] == (int)evaluate(size, Q, bestResult)) {
+        inside =  true ;
+      }
+    }
+    if (inside) {
+      cout << "Result already in Tabu" << endl ;
+    }
+    else {
+      s = TSPbestNeighbour(size, Q, bestResult) ;
+      if ((int)evaluate(size, Q, s) < (int)evaluate(size, Q, bestResult)) {
+        Tabu[index] = (int)evaluate(size, Q, bestResult);
+        index ++;
+        for (size_t i = 0; i < size; i++) {
+          bestResult[i] = s[i];
+        }
+      }
+    }
+    nb_moves ++ ;
+  }
+  while (nb_moves <= max_attempts) ;
+  int min = 50000;
+  for (size_t i = 0; i < max_attempts; i++) {
+    if (Tabu[i]<min) {
+      min = Tabu[i];
+    }
+  }
+  return min;
+}
+
+//DONE
 int * readFile (int * size) {
   ifstream file("tsp101.txt");
   string sizeS;
@@ -139,14 +190,29 @@ int main()
 
   int * city =  readFile(&size) ;
   cout << "SIZE: " << size << endl ;
-  //whatever value of S
+
   int * S= randomS(size);
-  for (size_t i = 0; i < size; i++) {
+  //int S[size] = {5,3,4,1,2};
+  /*for (size_t i = 0; i < size; i++) {
     cout << S[i] << " " ;
   }
-  //TODO RANDOM solution
 
+  for (size_t i = 0; i <size*3; i++) {
+    if (i%3 == 0) {
+      cout << endl ;
+    }
+    cout << city[i] << " " ;
+  }*/
 
+  //float test = evaluate(size, city, S) ;
+
+  int * a = TSPbestNeighbour(size, city, S) ;
+  cout << evaluate(size, city, a) << endl;
+  /*int * b = TSPsteepestHillClimbing(size, city, S, 10) ;
+  cout << evaluate(size, city, b) << endl;*/
+
+  int c =  TSPtabuMethod(size, city, S, 500);
+  cout << c << endl ;
   /*
   cout << "Steepest Hill Climbing method with random :" << endl  ;
   int * a = steepestHillClimbing(size, Q, S, 8);
