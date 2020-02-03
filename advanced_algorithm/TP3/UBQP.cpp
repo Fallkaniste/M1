@@ -11,7 +11,7 @@
 using namespace std;
 
 #define SIZE 6
-#define MAX_MOVES 20
+#define MAX_MOVES 10
 
 int evaluate(int size, int * Q, int * X) {
   int temp[size][size] ;
@@ -60,7 +60,11 @@ int * bestNeighbour(int size, int * Q, int * X) {
       }
     }
     neighbourResult[k] = result ;
-    if (result < min) {
+    int tot =0;
+    for (size_t i = 0; i < size; i++) {
+      tot += X[i];
+    }
+    if ((result < min)&&(tot >=3)) {
       min = result ;
       for (size_t i = 0; i < size; i++) {
         bestNeighbour[i] = X[i] ;
@@ -74,7 +78,7 @@ int * bestNeighbour(int size, int * Q, int * X) {
 int * steepestHillClimbing(int size, int * Q, int * X, int max_attempts, int constraint) {
   int * bestResult = new int [size];
   for (size_t t = 0; t < max_attempts; t++) {
-    X = randomS(size) ;
+    //X = randomS(size) ;
     for (size_t i = 0; i < size; i++) {
       cout << X[i] << " ";
     }
@@ -121,6 +125,9 @@ int * steepestHillClimbing(int size, int * Q, int * X, int max_attempts, int con
 
 int UBQPtabuMethod(int size, int * Q, int * X, int max_attempts) {
   int * bestResult = randomS(size);
+  for (size_t i = 0; i < size; i++) {
+    bestResult[i] = X[i];
+  }
   int * s = new int[size];
   int Tabu[max_attempts] ;
   for (size_t i = 0; i < max_attempts; i++) {
@@ -138,10 +145,14 @@ int UBQPtabuMethod(int size, int * Q, int * X, int max_attempts) {
       }
     }
     if (inside) {
-      cout << "Result already in Tabu" << endl ;
+      cout << "A " ;
     }
     else {
       s = bestNeighbour(size, Q, bestResult) ;
+      for (size_t i = 0; i < size; i++) {
+        cout << s[i] << " " ;
+      }
+      cout << endl;
       Tabu[index] = evaluate(size, Q, bestResult);
       if (evaluate(size, Q, s) < evaluate(size, Q, bestResult)) {
         for (size_t i = 0; i < size; i++) {
@@ -163,7 +174,7 @@ int UBQPtabuMethod(int size, int * Q, int * X, int max_attempts) {
 }
 
 int * readFile (int * size, int * p) {
-  ifstream file("graphe12345.txt");
+  ifstream file("schedule_s1_v3.txt");
   string sizeS;
   file >> sizeS ;
   *size = atoi (sizeS.c_str());
@@ -186,8 +197,27 @@ int main()
   int p = 0;
   int * Q =  readFile(&size, &p) ;
   cout << "SIZE SIZE " << size << endl ;
-  int * S= new int (size);
+  int S[size]= {1,1,1,1,0,1};
+  cout << evaluate(size, Q, S) << endl ;
 
+
+  /*int * B = bestNeighbour( size, Q, S);
+  for (size_t i = 0; i < size; i++) {
+    cout << B[i] << " " ;
+  }
+  cout << endl ;
+  cout << evaluate(size, Q, B) << endl;*/
+/*
+  int * A = steepestHillClimbing(size, Q, S, 10, 0);
+
+  cout << evaluate(size, Q, A) << endl;
+  for (size_t i = 0; i < size; i++) {
+    cout << A[i] << " " ;
+  }
+  cout << endl ;
+*/
+  /*int tabu = UBQPtabuMethod(size, Q, S, 50) ;
+  cout << tabu << endl;*/
 
 
   cout << "Steepest Hill Climbing method with random :" << endl  ;
@@ -196,9 +226,9 @@ int main()
     cout << a[i] << " ";
   }
   cout << endl << evaluate(size, Q, a) << endl ;
-
+/*
   int b =  UBQPtabuMethod(size, Q, S, 30) ;
-  cout << b << endl;
+  cout << b << endl;*/
   /*int * a = bestNeighbour(SIZE, Q, S);
   cout << endl << evaluate(SIZE, Q, a) << endl;*/
     return 0;

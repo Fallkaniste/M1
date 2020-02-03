@@ -12,7 +12,7 @@
 using namespace std;
 
 #define SIZE 6
-#define MAX_MOVES 300
+#define MAX_MOVES 20
 
 //DONE
 float evaluate(int size, int * Q, int * X) {
@@ -87,11 +87,12 @@ int * TSPbestNeighbour(int size, int * Q, int * X) {
 //DONE
 int * TSPsteepestHillClimbing(int size, int * Q, int * X, int max_attempts) {
   int * bestResult = new int [size];
+  int moy = 0 ;
   for (size_t t = 0; t < max_attempts; t++) {
     X = randomS(size) ;
-    /*for (size_t i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
       cout << X[i] << " ";
-    }*/
+    }
     cout << "another one" <<endl ;
     if (t == 0) {
       for (size_t i = 0; i < size; i++) {
@@ -113,13 +114,14 @@ int * TSPsteepestHillClimbing(int size, int * Q, int * X, int max_attempts) {
       nb_moves ++ ;
     }
     while ((nb_moves <= MAX_MOVES)||!STOP);
+    moy += evaluate(size, Q, X) ;
     if (evaluate(size, Q, X)<evaluate(size, Q, bestResult)) {
       for (size_t i = 0; i < size; i++) {
         bestResult[i] = X[i];
       }
     }
   }
-
+  //cout << "MOYENNE :" << moy/100 << endl ;
   return bestResult;
 }
 
@@ -170,7 +172,7 @@ int TSPtabuMethod(int size, int * Q, int * X, int max_attempts) {
 
 //DONE
 int * readFile (int * size) {
-  ifstream file("tsp101.txt");
+  ifstream file("tsp_s1_v3.txt");
   string sizeS;
   file >> sizeS ;
   *size = atoi (sizeS.c_str());
@@ -192,7 +194,7 @@ int main()
   cout << "SIZE: " << size << endl ;
 
   int * S= randomS(size);
-  //int S[size] = {5,3,4,1,2};
+  //int S[size] = {4,7,2,1,6,3,5};
   /*for (size_t i = 0; i < size; i++) {
     cout << S[i] << " " ;
   }
@@ -204,15 +206,37 @@ int main()
     cout << city[i] << " " ;
   }*/
 
-  //float test = evaluate(size, city, S) ;
+  /*int * tests[100];
+  for (size_t i = 0; i < 100; i++) {
+    tests[i] = randomS(size);
+  }
+  float moy = 0;
+  for (size_t i = 0; i < 100; i++) {
+    moy += evaluate(size, city, tests[i]) ;
+  }
+  cout << "MOYENNE FLAT " << moy/100 << endl ;*/
+  /*float test = evaluate(size, city, S) ;
+  cout << test << endl ;*/
 
-  int * a = TSPbestNeighbour(size, city, S) ;
+
+  /*int * a = TSPbestNeighbour(size, city, S) ;
+  for (size_t i = 0; i < size; i++) {
+    cout << a[i] <<"" ;
+  }
+  cout << endl ;
   cout << evaluate(size, city, a) << endl;
-  /*int * b = TSPsteepestHillClimbing(size, city, S, 10) ;
-  cout << evaluate(size, city, b) << endl;*/
+  cout << endl << endl ;
+*/
+  int * b = TSPsteepestHillClimbing(size, city, S, 400) ;
+  for (size_t i = 0; i < size; i++) {
+    cout << b[i] <<"" ;
+  }
+  cout << endl ;
+  cout << evaluate(size, city, b) << endl;
+  cout << endl << endl ;
 
-  int c =  TSPtabuMethod(size, city, S, 500);
-  cout << c << endl ;
+  /*int c =  TSPtabuMethod(size, city, S, 300);
+  cout << c << endl ;*/
   /*
   cout << "Steepest Hill Climbing method with random :" << endl  ;
   int * a = steepestHillClimbing(size, Q, S, 8);
