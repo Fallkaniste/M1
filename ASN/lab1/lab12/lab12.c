@@ -4,13 +4,16 @@
 int main(void) {
 
 	/* initialization */
+
 	PIO_PER = YELLOW | GREEN | PUSH1 | PUSH2 ;
 	PIO_OER = YELLOW | GREEN ;
 	PIO_ODR = PUSH1 | PUSH2 ;
 	PIO_SODR = YELLOW | GREEN ;
 
 	int GreenState = 0 ;
+
 	/* main loop */
+
 	while(1) {
 		if ((PIO_PDSR & PUSH1) == 0){
 			PIO_CODR = YELLOW ;
